@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>TechVerse Attendance System</title>
+</head>
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- CDN Dependencies -->
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- vladmandic/face-api.js fork for face recognition & landmarks -->
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+
+
+</head>
+
+<body>
+
+  <!-- Landing Page -->
+  <div id="landing-page" class="landing-page">
+    <div class="landing-bg"></div>
+    <div class="landing-content">
+      <h1 class="landing-title">TechVerse Smart Attendance</h1>
+      <p class="landing-subtitle">AI-powered attendance management with facial recognition</p>
+      
+      <div class="landing-features">
+        <div class="landing-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <h3>Real-time Dashboard</h3>
+          <p>Monitor attendance with live analytics & reports</p>
+        </div>
+        
+        <div class="landing-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <h3>Facial Recognition</h3>
+          <p>Secure & fast biometric attendance system</p>
+        </div>
+        
+        <div class="landing-feature">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          <h3>AI Predictions</h3>
+          <p>Machine learning-powered attendance forecasting</p>
+        </div>
+      </div>
+      
+      <!-- Login Form on Landing Page -->
+      <div class="landing-login-form">
+        <div class="control-group">
+          <label for="landing-username">Username</label>
+          <input type="text" id="landing-username" class="date-input" placeholder="Enter username">
+        </div>
+        <div class="control-group">
+          <label for="landing-password">Pass Key</label>
+          <input type="password" id="landing-password" class="date-input" placeholder="Enter pass key">
+        </div>
+        <button id="landing-login-btn" class="landing-btn">Login</button>
+        <button id="landing-register-toggle" class="landing-register-btn" onclick="alert('Button clicked directly!'); const modal = document.getElementById('register-modal'); modal.classList.add('active');">Register New Account</button>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 16px;">
+          Default: admin / admin123
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div class="app-container" id="app-container">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path
+              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+            </path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+        </div>
+        <span class="logo-text">TechVerse SMART Attendance</span>
+      </div>
+
+      <ul class="nav-links">
+        <li>
+          <a class="nav-item active" data-tab="dashboard-tab" id="nav-dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>Attendance Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="kiosk-tab" id="nav-kiosk">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+              <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+            <span>Smart Kiosk (Cam)</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="predictor-tab" id="nav-predictor">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>AI ML Predictor</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="students-tab" id="nav-students">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span>Students Database</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="reports-tab" id="nav-reports">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <span>Attendance Reports</span>
+          </a>
+        </li>
+        <li>
+          <a class="nav-item" data-tab="mobile-sim-tab" id="nav-mobile-sim">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+              <line x1="12" y1="18" x2="12.01" y2="18"></line>
+            </svg>
+            <span>Mobile Portal Sim</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="system-status">
+          <span class="status-indicator"></span>
+          <span>Developed By Pravin Bangar</span>
+        </div>
+        <button id="clear-storage-btn" class="btn-secondary" style="width: 100%; margin-top: 10px; padding: 8px;">Clear All Storage</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Frame -->
+    <main class="main-content">
+
+      <!-- Top Sticky Header -->
+      <header class="header">
+        <div class="page-title-area">
+          <h1 id="page-title">
+            <h1 id="page-title">TechVerse Smart Attendance System</h1>
+            <p style="font-size:13px;color:#aaa;margin-top:5px;">
+              Suryodaya College of Engineering and Technology, Nagpur
+            </p>
+          </h1>
+        </div>
+
+        <div class="header-widgets">
+          <!-- Real-time Clock -->
+          <div class="clock-widget">
+            <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span id="clock-widget-time">00:00:00 AM</span>
+          </div>
+
+
+          <button id="logout-btn" class="ex-btn" style="margin-left:16px; padding:8px 16px;">Logout</button>
+        </div>
+      </header>
+
+      <!-- Content viewport -->
+      <div class="content-body">
+
+        <!-- ==================== TAB 1: OVERVIEW DASHBOARD ==================== -->
+        <section class="tab-panel active" id="dashboard-tab">
+
+          <!-- Quick metrics row -->
+          <div class="dashboard-grid">
+            <div class="glass-card metric-card m-cyan">
+              <div class="metric-info">
+                <h3>Today's Attendance</h3>
+                <div class="metric-value" id="stat-rate">0.0%</div>
+                <div class="metric-trend trend-up">
+                  <span>▲ 2.4% vs last week</span>
+                </div>
+              </div>
+              <div class="metric-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+            </div>
+
+            <div class="glass-card metric-card m-green">
+              <div class="metric-info">
+                <h3>Active Students</h3>
+                <div class="metric-value" id="stat-students">0</div>
+                <div class="metric-trend">
+                  <span style="color:var(--text-secondary)">Fully enrolled biometric roster</span>
+                </div>
+              </div>
+              <div class="metric-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                </svg>
+              </div>
+            </div>
+
+            <div class="glass-card metric-card m-blue">
+              <div class="metric-info">
+                <h3>Male Students</h3>
+                <div class="metric-value" id="stat-male">0</div>
+                <div class="metric-trend">
+                  <span style="color:var(--text-secondary)">Total male students</span>
+                </div>
+              </div>
+              <div class="metric-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2C13.1 2 14 2.9 14 4S13.1 6 12 6 10 5.1 10 4 10.9 2 12 2zM12 8c2.2 0 4 1.8 4 4v6H8v-6c0-2.2 1.8-4 4-4z"></path>
+                </svg>
+              </div>
+            </div>
+
+            <div class="glass-card metric-card m-purple">
+              <div class="metric-info">
+                <h3>Female Students</h3>
+                <div class="metric-value" id="stat-female">0</div>
+                <div class="metric-trend">
+                  <span style="color:var(--text-secondary)">Total female students</span>
+                </div>
+              </div>
+              <div class="metric-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2C13.1 2 14 2.9 14 4S13.1 6 12 6 10 5.1 10 4 10.9 2 12 2zM12 8c2.2 0 4 1.8 4 4v1H8v-1c0-2.2 1.8-4 4-4zM8 15h8v2H8z"></path>
+                </svg>
+              </div>
+            </div>
+
+            <div class="glass-card metric-card m-orange">
+              <div class="metric-info">
+                <h3>Lateness Rate</h3>
+                <div class="metric-value" id="stat-late">0.0%</div>
+                <div class="metric-trend trend-down">
+                  <span>▼ 1.1% late arrivals</span>
+                </div>
+              </div>
+              <div class="metric-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+            </div>
+
+            <div class="glass-card metric-card m-pink">
+              <div class="metric-info">
+                <h3>Spoofs Blocked</h3>
+                <div class="metric-value" id="stat-spoofs">0</div>
+                <div class="metric-trend trend-down" style="color:var(--neon-green)">
+                  <span>Security Shield 100% Active</span>
+                </div>
+              </div>
+              <div class="metric-icon-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts and Activity feed row -->
+          <div class="dashboard-row-2">
+           <div class="glass-card" style="padding:20px;margin-top:20px;">
+  <h2 style="color:#ff4d4d;">⚠ Low Attendance Alert</h2>
+
+  <table class="data-table">
+    <tr>
+      <th>Student</th>
+      <th>Attendance</th>
+    </tr>
+
+    <tr>
+      <td>Pravin Bangar</td>
+      <td style="color:red;">72%</td>
+    </tr>
+
+    <tr>
+      <td>Yathart Donarkar</td>
+      <td style="color:red;">68%</td>
+    </tr>
+
+    <tr>
+      <td>Atharv Thakre</td>
+      <td style="color:red;">70%</td>
+    </tr>
+  </table>
+</div>
+            <!-- Attendance History Chart -->
+            <div class="glass-card chart-card">
+              <div class="card-header">
+                <h2>AI Attendance Analytics</h2>
+                <div class="chart-filters">
+                  <button class="chart-btn active" data-days="10">10 Days</button>
+                  <button class="chart-btn" data-days="30">30 Days</button>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="attendance-chart"></canvas>
+              </div>
+            </div>
+
+            <!-- Live log stream -->
+            <div class="glass-card log-card">
+              <div class="card-header">
+                <h2>Real-Time Scan Log</h2>
+                <span style="font-size:11px;color:var(--neon-green);display:flex;align-items:center;gap:4px;"><span
+                    class="status-indicator"></span>LIVE</span>
+              </div>
+              <div class="log-list" id="recent-logs">
+                <!-- Log items populated dynamically -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Tables & Terminals Row -->
+          <div class="dashboard-row-3">
+            <div class="glass-card" style="padding:20px;margin-bottom:20px;">
+              <h2 style="color:#ff4d4d;">Low Attendance Alert</h2>
+
+              <p style="margin-top:10px;">
+                Students below 75% attendance are automatically highlighted for academic monitoring.
+              </p>
+
+              <ul style="margin-top:10px;">
+                <li>Pravin Bangar - 72%</li>
+                <li>Yathart Donarkar - 68%</li>
+                <li>Mayur kuradkar- 70%</li>
+                <li>Atharv Thakre- 55%</li>
+              </ul>
+            </div>
+            <!-- Dept Attendance Table -->
+            <div class="glass-card table-card">
+              <div class="card-header">
+                <h2>Department Breakdown</h2>
+              </div>
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Code</th>
+                    <th>Department</th>
+                    <th>Average Rate</th>
+                  </tr>
+                </thead>
+                <tbody id="dept-attendance-rows">
+                  <!-- Row details populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Monospace Sync Console Terminal -->
+            <div class="glass-card terminal-card">
+              <div class="terminal-header">
+                <span>SECURE TRANSACTION CLOUD LOG</span>
+                <span style="color:var(--neon-green);">CONNECTED</span>
+              </div>
+              <div class="terminal-screen" id="terminal-logs">
+                <div class="term-line">&gt; Initializing secure cloud sync listeners...</div>
+                <div class="term-line">&gt; WebSockets connected to regional campus node.</div>
+                <div class="term-line">&gt; Standby for database events...</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== TAB 2: SMART CAM KIOSK ==================== -->
+        <section class="tab-panel" id="kiosk-tab">
+          <div class="kiosk-grid">
+
+            <!-- Video scanning area (Left) -->
+            <div class="glass-card camera-panel">
+              <div class="camera-viewport" id="camera-viewport">
+                <!-- Glowing scan line overlay -->
+                <div class="scanner-line"></div>
+
+                <video id="camera-video" class="camera-video" width="640" height="480" autoplay muted
+                  playsinline></video>
+                <canvas id="camera-canvas" class="camera-canvas"></canvas>
+
+                <!-- Initial camera button placeholder -->
+                <div class="camera-placeholder" id="camera-placeholder">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                  </svg>
+                  <p>Smart Kiosk webcam offline. Turn on stream to enable biometric check-in.</p>
+                  <button id="start-camera-btn">Initialize Scanner Camera</button>
+                </div>
+              </div>
+
+              <div style="width:100%; display:flex; justify-content:space-between; margin-top:20px;">
+                <span style="font-size:12px; color:var(--text-muted);">CAM NODE: KIOSK-CS-MAIN</span>
+                <button class="ex-btn" id="stop-camera-btn"
+                  style="max-width:140px; padding:6px 12px; background:rgba(255,8,68,0.1); border-color:rgba(255,8,68,0.2); color:var(--neon-pink);">Shut
+                  down camera</button>
+              </div>
+            </div>
+
+            <!-- Challenge & Anti-Spoof HUD (Right) -->
+            <div class="glass-card verification-panel">
+              <div class="card-header">
+                <h2>Liveness Verification Shield</h2>
+              </div>
+
+              <!-- Challenge display box -->
+              <div class="challenge-box">
+                <span class="challenge-indicator">Active Challenge</span>
+                <div class="challenge-title">Active AI Prompts</div>
+                <div class="challenge-prompt" id="challenge-prompt">STANDING BY FOR CAM</div>
+                <div class="challenge-progress">
+                  <div class="challenge-progress-fill" id="challenge-progress-fill"></div>
+                </div>
+              </div>
+
+              <!-- Liveness stats mini cards -->
+              <div class="status-grid">
+                <div class="status-mini-card">
+                  <span class="sm-label">Biometric Liveness</span>
+                  <span class="sm-value" id="liveness-score-val">0.0%</span>
+                </div>
+                <div class="status-mini-card">
+                  <span class="sm-label">Challenge Status</span>
+                  <span class="sm-value" id="live-status-val">WAITING</span>
+                </div>
+              </div>
+
+              <!-- Anti-Spoof demonstration overrides (for exhibitions) -->
+              <div class="exhibition-controls">
+                <h3>Exhibition Demo Controls</h3>
+                <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.4;">
+                  Use these controls to demonstrate anti-spoofing functionality without needing printouts, or to test
+                  mobile dynamic QR check-ins.
+                </p>
+                <div class="control-buttons-row">
+                  <button class="ex-btn ex-btn-spoof" id="demo-spoof-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <path
+                        d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                      </path>
+                      <line x1="12" y1="9" x2="12" y2="13"></line>
+                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    <span>Inject Photo Spoof</span>
+                  </button>
+                  <button class="ex-btn ex-btn-qr" id="demo-qr-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                      <rect x="7" y="7" width="3" height="3"></rect>
+                      <rect x="14" y="7" width="3" height="3"></rect>
+                      <rect x="7" y="14" width="3" height="3"></rect>
+                      <rect x="14" y="14" width="3" height="3"></rect>
+                    </svg>
+                    <span>Scan Mobile QR</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ==================== TAB 3: AI ATTENDANCE PREDICTOR ==================== -->
+        <section class="tab-panel" id="predictor-tab">
+          <div class="predictor-grid">
+
+            <!-- Parameters selector card (Left) -->
+            <div class="glass-card form-panel">
+              <h2>Attendance Variable Inputs</h2>
+
+              <div class="control-group">
+                <label for="p-day">Day of the Week</label>
+                <select id="p-day" class="custom-select">
+                  <option value="1">Monday (Weekday start)</option>
+                  <option value="2">Tuesday (Midweek)</option>
+                  <option value="3" selected>Wednesday (Midweek peak)</option>
+                  <option value="4">Thursday (Midweek)</option>
+                  <option value="5">Friday (Weekend slide)</option>
+                </select>
+              </div>
+
+              <div class="control-group">
+                <label for="p-weather">Current Weather conditions</label>
+                <select id="p-weather" class="custom-select">
+                  <option value="Sunny" selected>Sunny (Clear Sky)</option>
+                  <option value="Overcast">Overcast (Cloudy)</option>
+                  <option value="Rainy">Rainy (Transit delays)</option>
+                </select>
+              </div>
+
+              <div class="control-group">
+                <label for="p-time">Lecture Time Slot</label>
+                <select id="p-time" class="custom-select">
+                  <option value="8:00 AM">08:00 AM (Early slot)</option>
+                  <option value="11:00 AM" selected>11:00 AM (Mid-day slot)</option>
+                  <option value="2:00 PM">02:00 PM (Afternoon slot)</option>
+                </select>
+              </div>
+
+              <div class="control-group"
+                style="display:flex; align-items:center; justify-content:space-between; margin-top:30px;">
+                <label for="p-exam" style="margin-bottom:0;">Exam Season Active</label>
+                <input type="checkbox" id="p-exam" style="width:20px; height:20px; cursor:pointer;">
+              </div>
+            </div>
+
+            <!-- Prediction output card (Right) -->
+            <div class="prediction-panel">
+              <div class="glass-card result-card">
+                <div class="pred-percent" id="pred-percent-val">0.0%</div>
+                <div class="pred-verdict" id="pred-verdict-val">OPTIMIZING ML REGRESSION...</div>
+
+                <div class="insights-box">
+                  <h3>AI Scheduling Recommendations</h3>
+                  <ul class="insight-list" id="pred-insights-list">
+                    <!-- Insights inserted dynamically -->
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Student dropout risks assessment -->
+              <div class="glass-card" style="padding:20px;">
+                <h3 style="font-size:15px;margin-bottom:12px;color:var(--text-primary);">Student Roster Risk Assessment
+                  (&lt;75% Rate)</h3>
+                <div id="risk-students-list" style="max-height: 180px; overflow-y: auto;">
+                  <!-- Dynamically populated list of poor attendance students -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ==================== TAB 4: STUDENTS DATABASE ==================== -->
+        <section class="tab-panel" id="students-tab">
+
+          <div class="roster-actions">
+            <!-- Search field -->
+            <div class="search-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="student-search-input" placeholder="Search student by name or ID...">
+            </div>
+
+            <!-- Register Face trigger button -->
+            <button class="enroll-btn" id="enroll-student-btn">
+              <svg style="width:20px;height:20px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <line x1="19" y1="8" x2="19" y2="14"></line>
+                <line x1="22" y1="11" x2="16" y2="11"></line>
+              </svg>
+              <span>Enroll Student Face</span>
+            </button>
+          </div>
+
+          <!-- Students cards grid -->
+          <div class="students-grid" id="roster-grid">
+            <!-- Student cards generated dynamically -->
+          </div>
+        </section>
+
+        <!-- ==================== TAB 5: REPORTS & SETTINGS ==================== -->
+        <section class="tab-panel" id="reports-tab">
+          <div class="settings-grid">
+
+            <!-- PDF/CSV selection card -->
+            <div class="glass-card report-panel">
+              <h2>Automated Report Generator</h2>
+
+              <div class="report-form">
+                <div class="form-row">
+                  <div class="control-group">
+                    <label for="r-start-date">Start Date</label>
+                    <input type="date" id="r-start-date" class="date-input">
+                  </div>
+                  <div class="control-group">
+                    <label for="r-end-date">End Date</label>
+                    <input type="date" id="r-end-date" class="date-input">
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <label for="r-dept">Filter Department</label>
+                  <select id="r-dept" class="custom-select">
+                    <option value="ALL">All Departments</option>
+                    <option value="CS">Computer Science & Eng (CS)</option>
+                    <option value="EE">Electrical Engineering (EE)</option>
+                    <option value="ME">Mechanical Engineering (ME)</option>
+                    <option value="BA">Business Administration (BA)</option>
+                  </select>
+                </div>
+
+                <div class="control-group">
+                  <label for="r-threshold">Highlight Critical Attendance Threshold</label>
+                  <select id="r-threshold" class="custom-select">
+                    <option value="">Do not filter threshold</option>
+                    <option value="75">Below 75% Attendance (Risky)</option>
+                    <option value="85">Below 85% Attendance</option>
+                  </select>
+                </div>
+
+                <div class="report-btn-row" style="margin-top:20px;">
+                  <button class="report-btn btn-secondary" id="report-export-csv">
+                    <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>Download CSV Roster</span>
+                  </button>
+                  <button class="report-btn btn-primary" id="report-export-pdf">
+                    <svg style="width:18px;height:18px" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                      <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    <span>Generate PDF Report</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Configurations Card -->
+            <div class="glass-card" style="padding:24px;">
+              <h2 style="font-size:18px;margin-bottom:24px;">System Configurations</h2>
+
+              <div class="control-group">
+                <label>Security Biometric Threshold</label>
+                <div class="slider-container">
+                  <input type="range" class="custom-slider" min="30" max="80" value="45" id="config-threshold-slider">
+                  <span class="slider-val">0.45</span>
+                </div>
+                <p style="font-size:11.5px;color:var(--text-muted);margin-top:6px;">Adjust distance margin. Lower values
+                  represent stricter matches.</p>
+              </div>
+
+              <div class="control-group" style="margin-top:24px;">
+                <label>Liveness Strictness</label>
+                <select class="custom-select" id="config-strict-select">
+                  <option value="standard">Standard Challenge Queue (2 Prompts)</option>
+                  <option value="high">High Security Queue (3 Prompts)</option>
+                  <option value="disabled">Bypass challenge (Biometric only)</option>
+                </select>
+              </div>
+
+              <div class="control-group"
+                style="margin-top:24px; display:flex; justify-content:space-between; align-items:center;">
+                <label style="margin-bottom:0;">Automated Ledger Blockchain Backup</label>
+                <div
+                  style="width:36px; height:20px; background:var(--neon-green); border-radius:10px; position:relative; cursor:pointer;">
+                  <span
+                    style="position:absolute; right:2px; top:2px; width:16px; height:16px; background:#fff; border-radius:50%;"></span>
+                </div>
+              </div>
+            </div>
+
+
+
+          </div>
+        </section>
+
+        <!-- ==================== TAB 6: MOBILE PORTAL SIMULATION ==================== -->
+        <section class="tab-panel" id="mobile-sim-tab">
+          <div class="mobile-simulator-layout">
+
+            <!-- iPhone Mobile frame -->
+            <div class="phone-frame">
+              <div class="phone-notch"></div>
+
+              <div class="phone-screen" id="phone-screen">
+
+                <!-- Header -->
+                <div class="mobile-header">
+                  <div class="m-student-profile">
+                    <img src="" class="m-student-avatar" id="m-student-avatar" alt="Avatar">
+                    <div class="m-student-info">
+                      <h4 id="m-student-name">Loading...</h4>
+                      <p id="m-student-id">...</p>
+                    </div>
+                  </div>
+
+                  <span style="font-size:10px; font-family:var(--font-mono); color:var(--neon-cyan);">TechVerse v1.0</span>
+                </div>
+
+                <!-- Selector for switching active student in demo -->
+                <div class="control-group" style="margin: 0;">
+                  <label for="m-student-select" style="font-size:9.5px; margin-bottom:4px;">Demo Student Profile</label>
+                  <select id="m-student-select" class="custom-select"
+                    style="padding:6px 10px; font-size:11.5px; background:rgba(255,255,255,0.05);">
+                    <!-- Generated Dynamically -->
+                  </select>
+                </div>
+
+                <!-- Rotating Dynamic Secure QR code -->
+                <div class="m-qr-card">
+                  <div class="m-qr-title">Secure Check-In Pass</div>
+
+                  <div class="m-qr-box">
+                    <img src="" id="m-qr-code-img" class="m-qr-img" alt="Scanning QR code">
+                  </div>
+
+                  <div class="m-qr-timer" id="m-qr-timer-text">Expires in: 10s</div>
+                  <p style="font-size:10px; color:var(--text-muted); margin-top:8px; line-height:1.3;">
+                    Hold QR Code in front of Kiosk Camera or click "Scan Mobile QR" in the Kiosk page.
+                  </p>
+                </div>
+
+                <!-- GPS Geofencing Status -->
+                <div class="m-gps-card">
+                  <div class="gps-title-row">
+                    <span>GPS Location Check</span>
+                    <button class="gps-toggle" id="m-gps-toggle-btn">Toggle Geofence</button>
+                  </div>
+                  <div class="gps-status-row">
+                    <span class="gps-dot" id="m-gps-dot"></span>
+                    <span id="m-gps-status" style="font-weight:600; font-size:11px; color:var(--neon-green);">ON CAMPUS
+                      (SAFE)</span>
+                  </div>
+                </div>
+
+                <!-- Student Personal Analytics rate -->
+                <div class="glass-card"
+                  style="padding:14px; display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.02);">
+                  <div>
+                    <h5 style="font-size:12px; font-weight:600; margin-bottom:2px;">Your Attendance Rate</h5>
+                    <p style="font-size:9.5px; color:var(--text-secondary);">
+                      Minimum Attendance Required: 75%
+                    </p>
+                  </div>
+
+                  <!-- Radial Chart Mini -->
+                  <div style="position:relative; width:64px; height:64px;">
+                    <svg viewBox="0 0 64 64" style="width:100%; height:100%; transform: rotate(-90deg);">
+                      <circle cx="32" cy="32" r="28" fill="transparent" stroke="rgba(255,255,255,0.05)"
+                        stroke-width="4"></circle>
+                      <circle cx="32" cy="32" r="28" fill="transparent" stroke="var(--neon-cyan)" stroke-width="4"
+                        stroke-dasharray="176" stroke-dashoffset="35" id="m-personal-ring"
+                        style="transition: stroke-dashoffset 0.4s ease;"></circle>
+                    </svg>
+                    <div
+                      style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-family:var(--font-mono); font-size:11px; font-weight:700;"
+                      id="m-personal-rate">0%</div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+      <footer style="text-align:center;padding:15px;color:#888;font-size:13px;">
+        © 2026 TechVerse Smart Attendance System | Developed By Pravin Bangar
+        Developed By Pravin Bangar |
+        Suryodaya College of Engineering and Technology, Nagpur
+      </footer>
+    </main>
+
+  </div>
+
+  <!-- ==================== DIALOG 1: STEP-BY-STEP FACE ENROLLMENT WIZARD ==================== -->
+  <div class="enroll-modal" id="enroll-modal">
+    <div class="glass-card enroll-card">
+      <div class="modal-header-row">
+        <h2 style="font-size:18px;">New Student Biometric Enrollment</h2>
+        <button class="modal-close-btn" id="enroll-close-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Steps header indicators -->
+      <div class="wizard-steps">
+        <span class="wizard-step active" id="w-step-indicator-1">1. Student Details</span>
+        <span class="wizard-step" id="w-step-indicator-2">2. Biometric Scan</span>
+        <span class="wizard-step" id="w-step-indicator-3">3. Confirm Details</span>
+      </div>
+
+      <!-- Step 1 Content -->
+      <div class="wizard-content active" id="w-content-1">
+        <div class="form-inputs-col">
+          <div class="control-group">
+            <label for="w-name">Full Name</label>
+            <input type="text" id="w-name" class="date-input" placeholder="e.g. Pravin Bangar"
+              style="font-family:var(--font-sans)">
+          </div>
+          <div class="control-group">
+            <label for="w-email">Academic Email</label>
+            <input type="email" id="w-email" class="date-input" placeholder="e.g. pravin.bangar@suryodaya.edu.in"
+              style="font-family:var(--font-sans)">
+          </div>
+          <div class="form-row">
+            <div class="control-group">
+              <label for="w-id">Student ID</label>
+              <input type="text" id="w-id" class="date-input" readonly>
+            </div>
+            <div class="control-group">
+              <label for="w-dept">Department</label>
+              <select id="w-dept" class="custom-select" style="padding:10px 16px;">
+                <option value="CS">Computer Science (CS)</option>
+                <option value="EE">Electrical Eng (EE)</option>
+                <option value="ME">Mechanical Eng (ME)</option>
+                <option value="BA">Business Admin (BA)</option>
+              </select>
+            </div>
+          </div>
+          <div class="control-group">
+            <label for="w-gender">Gender</label>
+            <select id="w-gender" class="custom-select" style="padding:10px 16px;">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="wizard-footer-buttons">
+            <button class="btn-primary report-btn" id="w-next-1" style="max-width:140px;">Proceed to Scan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 Content -->
+      <div class="wizard-content" id="w-content-2">
+        <div class="wizard-camera-container">
+          <video id="wizard-video" class="wizard-video" width="400" height="300" autoplay muted playsinline></video>
+          <div class="wizard-overlay">
+            <div class="wizard-overlay-oval" id="wizard-overlay-oval"></div>
+          </div>
+        </div>
+        <div class="captures-counter" id="captures-counter">Align face inside frame and stand still</div>
+        <div class="wizard-footer-buttons" style="margin-top:20px;">
+          <button class="btn-secondary report-btn" id="w-prev-2" style="max-width:100px;">Back</button>
+          <button class="btn-primary report-btn" id="w-capture-btn"
+            style="max-width:160px; background:linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-blue) 100%);">Capture
+            Biometrics</button>
+        </div>
+      </div>
+
+      <!-- Step 3 Content -->
+      <div class="wizard-content" id="w-content-3">
+        <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 20px;">
+          <img id="w-summary-photo" src="" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 2px solid var(--neon-cyan);">
+          <div class="insights-box" style="flex:1; margin-bottom:0;">
+            <h3 style="margin-bottom:12px;">Enrollment Record Ready</h3>
+            <div style="font-size:13.5px; line-height:1.8; color:var(--text-secondary);">
+              <div><strong>NAME:</strong> <span id="w-summary-name" style="color:#fff;"></span></div>
+              <div><strong>STUDENT ID:</strong> <span id="w-summary-id"
+                  style="color:#fff; font-family:var(--font-mono);"></span></div>
+              <div><strong>BIOMETRICS:</strong> <span style="color:var(--neon-green);">Pattern Extracted (128 Vector
+                  Arrays mapped)</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="wizard-footer-buttons">
+          <button class="btn-secondary report-btn" id="w-cancel-3" style="max-width:100px;">Cancel</button>
+          <button class="btn-primary report-btn" id="w-finish-btn"
+            style="max-width:160px; background:linear-gradient(135deg, var(--neon-green) 0%, var(--neon-blue) 100%); box-shadow:var(--shadow-green);">Save
+            Student Roster</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DIALOG 0: LOGIN MODAL ==================== -->
+  <div class="login-modal" id="login-modal">
+    <div class="glass-card login-card">
+      <h2 style="font-size:22px; text-align:center; margin-bottom:24px;">Login to TechVerse</h2>
+      <div class="form-inputs-col">
+        <div class="control-group">
+          <label for="login-username">Username</label>
+          <input type="text" id="login-username" class="date-input" placeholder="Enter username">
+        </div>
+        <div class="control-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" class="date-input" placeholder="Enter password">
+        </div>
+        <button class="btn-primary report-btn" id="login-btn" style="width:100%; margin-top:16px;">Login</button>
+        <p style="font-size:12px; color:var(--text-muted); text-align:center; margin-top:16px;">
+          Default credentials: admin / admin123
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DIALOG 4: REGISTRATION MODAL ==================== -->
+  <div class="enroll-modal" id="register-modal">
+    <div class="glass-card enroll-card">
+      <div class="modal-header-row">
+        <h2 style="font-size:18px;">Register New Account</h2>
+        <button class="modal-close-btn" id="register-close-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="form-inputs-col">
+        <div class="control-group">
+          <label for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" class="date-input" style="font-family:var(--font-sans)">
+        </div>
+        <div class="control-group">
+          <label for="reg-username">Username</label>
+          <input type="text" id="reg-username" class="date-input" style="font-family:var(--font-sans)">
+        </div>
+        <div class="control-group">
+          <label for="reg-password">Password</label>
+          <input type="password" id="reg-password" class="date-input" style="font-family:var(--font-sans)">
+        </div>
+        <div class="control-group">
+          <label for="reg-confirm">Confirm Password</label>
+          <input type="password" id="reg-confirm" class="date-input" style="font-family:var(--font-sans)">
+        </div>
+        <div class="wizard-footer-buttons">
+          <button class="btn-secondary report-btn" id="reg-cancel-btn" style="max-width:100px;">Cancel</button>
+          <button class="btn-primary report-btn" id="reg-save-btn" style="max-width:140px;">Register</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DIALOG 3: EDIT STUDENT MODAL ==================== -->
+  <div class="enroll-modal" id="edit-modal">
+    <div class="glass-card enroll-card">
+      <div class="modal-header-row">
+        <h2 style="font-size:18px;">Edit Student Details</h2>
+        <button class="modal-close-btn" id="edit-close-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="form-inputs-col">
+        <div class="control-group">
+          <label for="e-name">Full Name</label>
+          <input type="text" id="e-name" class="date-input" style="font-family:var(--font-sans)">
+        </div>
+        <div class="control-group">
+          <label for="e-email">Academic Email</label>
+          <input type="email" id="e-email" class="date-input" style="font-family:var(--font-sans)">
+        </div>
+        <div class="form-row">
+          <div class="control-group">
+            <label for="e-id">Student ID</label>
+            <input type="text" id="e-id" class="date-input" readonly>
+          </div>
+          <div class="control-group">
+            <label for="e-dept">Department</label>
+            <select id="e-dept" class="custom-select" style="padding:10px 16px;">
+              <option value="CS">Computer Science (CS)</option>
+              <option value="EE">Electrical Eng (EE)</option>
+              <option value="ME">Mechanical Eng (ME)</option>
+              <option value="BA">Business Admin (BA)</option>
+            </select>
+          </div>
+        </div>
+        <div class="control-group">
+          <label for="e-gender">Gender</label>
+          <select id="e-gender" class="custom-select" style="padding:10px 16px;">
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="wizard-footer-buttons">
+          <button class="btn-secondary report-btn" id="e-cancel-btn" style="max-width:100px;">Cancel</button>
+          <button class="btn-primary report-btn" id="e-save-btn" style="max-width:140px;">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DIALOG 2: ATTENDANCE VERIFICATION SUCCESS ==================== -->
+  <div class="success-modal" id="success-modal">
+    <div class="glass-card success-card">
+      <div class="success-ring">
+        <svg viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd"
+            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+            clip-rule="evenodd" />
+        </svg>
+      </div>
+
+      <h2 style="font-size:20px; font-weight:700; color:var(--neon-green);">VERIFICATION SUCCESSFUL</h2>
+      <p style="font-size:13px; color:var(--text-secondary); margin-top:-10px;">Liveness Challenge passed. Ledger
+        updated.</p>
+
+      <div class="student-card-swipe">
+        <img src="" id="swipe-avatar" class="swipe-avatar" alt="Avatar">
+        <div class="swipe-info">
+          <h3 id="swipe-name">Pravin Bangar</h3>
+          <p id="swipe-id"><SCET-2026-538></SCET-2026-538></p>
+          <div style="margin-top:6px;"><span id="swipe-badge" class="badge">Present</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Stack Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Application core JS scripts -->
+  <script src="mock-data.js"></script>
+  <script src="db.js"></script>
+  <script src="face-engine.js"></script>
+  <script src="ml-predictor.js"></script>
+  <script src="reports.js"></script>
+  <script src="mobile-sim.js"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
